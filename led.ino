@@ -36,7 +36,7 @@ void setup() {
   printUsage();
 }
 
-void(*resetFunc) (void) = 0; //----function for rest arduino--------
+void(*resetFunc) (void) = 0; //----function for rest arduino-------
 
 void loop() {
   ws2812fx.service();
