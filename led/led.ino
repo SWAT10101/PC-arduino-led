@@ -21,12 +21,13 @@ int EEPROaddress_mode = 120;    // EEPROM address where led mode is store
 int EEPROaddress_color_r = 130;   // EEPROM address where red color value is store
 int EEPROaddress_color_g = 131;   // EEPROM address where green color value is store
 int EEPROaddress_color_b = 132;   // EEPROM address where blue color value is store
+int EEPROaddress_brightness = 133;   // EEPROM address where brightness color value is store
 
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(10);
   ws2812fx.init();
-  ws2812fx.setBrightness(100);
+  ws2812fx.setBrightness(EEPROM.read(EEPROaddress_brightness)); // read brightness from EEPROM
   ws2812fx.setSpeed(1000);
   ws2812fx.setColor(EEPROM.read(EEPROaddress_color_r), EEPROM.read(EEPROaddress_color_g), EEPROM.read(EEPROaddress_color_b));  // read color from EEPROM
   ws2812fx.setMode(EEPROM.read(EEPROaddress_mode));   // read mod from EEPROM
@@ -60,12 +61,14 @@ void process_command() {
     ws2812fx.increaseBrightness(10);
     Serial.print(F("Increased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
+    EEPROM.write(EEPROaddress_brightness, ws2812fx.getBrightness()); // stor brightness value in EEPROM
   }
 
   if(cmd.startsWith(F("b-"))) {
     ws2812fx.decreaseBrightness(10); 
     Serial.print(F("Decreased brightness by 25 to: "));
     Serial.println(ws2812fx.getBrightness());
+    EEPROM.write(EEPROaddress_brightness, ws2812fx.getBrightness()); // stor brightness value in EEPROM
   }
 
   if(cmd.startsWith(F("b "))) { 
@@ -73,6 +76,7 @@ void process_command() {
     ws2812fx.setBrightness(b);
     Serial.print(F("Set brightness to: "));
     Serial.println(ws2812fx.getBrightness());
+    EEPROM.write(EEPROaddress_brightness, ws2812fx.getBrightness()); // stor brightness value in EEPROM
   }
 
   if(cmd.startsWith(F("s+"))) { 
@@ -169,10 +173,6 @@ void printUsage() {
   Serial.println();
   Serial.println();
   Serial.println(F("f space \t : to rest arduino"));
-  Serial.println();
-  Serial.println();
-  Serial.println( EEPROM.read(EEPROaddress_mode) );
-//  Serial.println( EEPROM.read(EEPROaddress_color));
   Serial.println();
   Serial.println();
   Serial.println(F("Have a nice day."));
